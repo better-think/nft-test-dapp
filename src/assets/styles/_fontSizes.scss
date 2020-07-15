@@ -1,0 +1,34 @@
+
+// Generic font sizes
+$fs-12: 1.2rem;
+$fs-14: 1.4rem;
+$fs-16: 1.6rem;
+$fs-21: 2.1rem;
+$fs-22: 2.2rem;
+$fs-23: 2.3rem;
+$fs-25: 2.5rem;
+$fs-30: 3rem;
+$fs-40: 4rem;
+$fs-50: 5rem;
+$fs-60: 6rem;
+
+$dashboard__header: $fs-22;
+$dashboard__header-category: $fs-30;
+$dashboard__view-more: $fs-23;
+
+// pc = preview card
+$pc-desc-content-username: $fs-25;
+$pc-desc-content-game-and-description: $fs-21;
+$pc-desc-content-viewers: $fs-16;
+
+$pc-status: 5.422rem;
+$pc-status-blt: 4.5306rem;
+
+$preferenceHeaderSize: $fs-50;
+$preferencesChildHeader: 3.778rem;
+$preferencesLabel: $fs-14;
+
+$expandIcon: $fs-40;
+
+$preferencesUserSearch: $fs-23;
+$preferencesBountyText: $fs-12;

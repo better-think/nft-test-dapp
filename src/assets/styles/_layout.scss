@@ -1,0 +1,30 @@
+$height__header: 11rem;
+$height__footer: 7.4rem;
+$height__body: calc(100% - 7.4rem); // 100 percent minus the footer height.
+$height__content: 100%;
+
+// pc = preview card.
+$pc-w: 97.7rem;
+$pc-h: 47.4rem;
+$pc-status-w: 17.0775rem;
+$pc-status-h: 6.7018rem;
+$pc-status-top: 5.427rem;
+
+$pc-desc-w: 35.7686rem;
+$pc-desc-h: 47.4rem;
+$pc-desc-content-w: 30rem;
+$pc-desc-content-h: 41.5rem;
+$pc-desc-content-description-w: 28.855rem;
+$pc-desc-content-description-h: 26.6875rem;
+$pc-desc-content-profile-h: 11.32rem;
+$pc-desc-content-profile-data-h: 7.5rem;
+$pc-desc-content-margin-top-left: 3.141rem;
+
+$pc-header-h: calc(2.843rem - 0.335rem);
+$pc-header-viewers-h: 2.177rem;
+$pc-header-viewers-w: 4.837rem;
+
+$dashboard__header-height: 7.1078rem;
+$dashboard__header-txt-pad: $dashboard__header-height / 2;
+
+$base-margins: 2rem 7rem 3rem;
