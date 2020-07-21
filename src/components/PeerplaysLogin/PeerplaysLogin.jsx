@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import {Button} from '@material-ui/core';
 
 import PeerplaysLoginForm from './PeerplaysLoginForm';
 
@@ -11,12 +12,17 @@ import PeerplaysLoginForm from './PeerplaysLoginForm';
  * - see other TODO blocks within this .jsx file.
  */
 class PeerplaysLogin extends Component {
+  redirectToRegister = () => {
+    this.props.history.push('/register');
+  }
+
   render() {
     return (
       <>
         <div className='peerplayslogin-page'>
           <span className='peerplayslogin__subHeader'>Peerplays Login</span>
-          <PeerplaysLoginForm />
+          <PeerplaysLoginForm history={this.props.history}/>
+          <Button onClick={ this.redirectToRegister } >Register Account</Button>
         </div>
       </>
     );

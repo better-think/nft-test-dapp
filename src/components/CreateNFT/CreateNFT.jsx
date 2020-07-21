@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {FormControl, Button, OutlinedInput, InputLabel} from '@material-ui/core';
+import {push} from 'connected-react-router';
 
 import { PeerplaysService } from '../../services';
 
@@ -10,7 +11,14 @@ const CreateNFT = () => {
   const [errors, setErrors] = useState({});
   const [createSuccess, setCreateSuccess] = useState(false);
 
+  const dispatch = useDispatch();
+
   const peerplaysAccount = useSelector(state => state.getIn(['peerplays','account']));
+
+  if(!peerplaysAccount) {
+    dispatch(push('/login'));
+  }
+
   const peerplaysAccountId = peerplaysAccount.getIn(['account','id']);
   const peerplaysAccountName = peerplaysAccount.getIn(['account','name']);
   const peerplaysPassword = useSelector(state => state.getIn(['peerplays','password']));
@@ -35,7 +43,7 @@ const CreateNFT = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if(isUrl(url)) {
+    if(!isUrl(url)) {
       setErrors({name: 'malformed url'});
       return;
     }
@@ -73,7 +81,7 @@ const CreateNFT = () => {
         approved: peerplaysAccountId,
         approved_operators: [],
         token_uri: url
-      }).then((mintRes) => {
+      }, peerplaysAccountName, peerplaysPassword).then((mintRes) => {
         if(!mintRes) {
           setErrors({
             name: 'Some error occurred while minting NFT'
@@ -147,9 +155,14 @@ const CreateNFT = () => {
           NFT Created Successfully
         </div>}
         <div className='createnft__btn-container'>
-          <Button disabled={ isDisabled() } type='submit' variant='contained'>
-            Create
-          </Button>
+          <div className='createnft__btn'>
+            <Button variant='contained' onClick={() => dispatch(push('/'))}>Back</Button>
+          </div>
+          <div className='createnft__btn'>
+            <Button disabled={ isDisabled() } type='submit' variant='contained'>
+              Create
+            </Button>
+          </div>
         </div>
       </form>
     </>

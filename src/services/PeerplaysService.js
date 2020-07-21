@@ -391,13 +391,13 @@ class PeerplaysService {
    *
    * @param {*} fullAccount - Received from @AuthActions processLogin.
    * @param {*} password - Received from @AuthActions processLogin.
-   * @returns {boolean}: Represents account as true: is authenticated or false: is not authenticated
+   * @returns {object}: Returns full account info if logged in otherwise null
    * @memberof PeerplaysService
    */
   authAccount(fullAccount, password) {
     // If missing form data, skip processing and early return false authentication.
     if (!fullAccount || !password) {
-      return false;
+      return null;
     }
 
     const accountName = fullAccount.getIn(['account', 'name']);
@@ -411,11 +411,11 @@ class PeerplaysService {
     const publicKey = keys.pubKeys.active;
 
     if(activeKeyAuths.find((keyauth) => keyauth[0] === publicKey))
-      return true;
+      return fullAccount;
     if(ownerKeyAuths.find((keyauth) => keyauth[0] === publicKey))
-      return true;
+      return fullAccount;
 
-    return false;
+    return null;
   }
 
   /**
@@ -423,12 +423,75 @@ class PeerplaysService {
    *
    * @param {string} peerplaysAccountUsername - Username for peerplays account.
    * @param {string} password - Master password for peerplays account.
-   * @returns {boolean} True if login succeeded otherwise false.
+   * @returns {object} Returns full account info if logged in otherwise null.
    * @memberof PeerplaysService
    */
   async peerplaysLogin(peerplaysAccountUsername, password) {
     const peerplaysAccount = await this.getFullAccount(peerplaysAccountUsername);
     return this.authAccount(peerplaysAccount, password);
+  }
+
+  async registerAccount(attempt, peerplaysAccountName, password) {
+    return new Promise((resolve, reject) => {
+      let faucetAddress = Config.faucetUrl;
+
+      const keys = Login.generateKeys(
+        peerplaysAccountName,
+        password,
+        ['owner', 'active', 'memo'],
+        IS_PRODUCTION ? 'PPY' : 'TEST'
+      );
+
+      console.log(JSON.stringify({
+        account: {
+            name: peerplaysAccountName,
+            owner_key: keys.pubKeys.owner,
+            active_key: keys.pubKeys.active,
+            memo_key: keys.pubKeys.memo,
+            refcode: '',
+            referrer: '1.2.0',
+        },
+        }));
+
+      return fetch(faucetAddress, {
+          method: 'post',
+          mode: 'cors',
+          headers: {
+          Accept: 'application/json',
+          'Content-type': 'application/json',
+          },
+          body: JSON.stringify({
+          account: {
+              name: peerplaysAccountName,
+              owner_key: keys.pubKeys.owner,
+              active_key: keys.pubKeys.active,
+              memo_key: keys.pubKeys.memo,
+              refcode: '',
+              referrer: '1.2.0',
+          },
+          }),
+      })
+          .then(response => {
+            let res = response.json();
+
+            return resolve(res);
+          })
+          .catch(err => {
+          if (attempt > 2) {
+              reject(err);
+          } else {
+              attempt++;
+
+              return this.registerAccount(
+              attempt,
+              peerplaysAccountName,
+              password
+              )
+              .then(res => resolve(res))
+              .catch(err => reject(err))
+          }
+          });
+      })
   }
 
   /**
@@ -508,7 +571,7 @@ class PeerplaysService {
       [result] = await tr.broadcast();
     } catch (e) {
       console.error(e.message);
-      throw e;
+      throw e.message;
     }
 
     return result;
