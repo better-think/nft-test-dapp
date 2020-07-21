@@ -40,7 +40,9 @@ class PeerplaysLoginForm extends Component {
     PeerplaysService.peerplaysLogin(this.state.username, this.state.password).then((res) => {
       if(res) {
         this.props.setLoggedIn(true);
+        this.props.setPeerplaysAccount(res);
         this.props.setPeerplaysPassword(this.state.password);
+        this.props.history.replace('/');
       } else {
         this.setState({
           errors: {

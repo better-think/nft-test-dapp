@@ -1,7 +1,7 @@
 import {applyMiddleware, createStore} from 'redux';
 import {createBrowserHistory} from 'history';
 import {routerMiddleware} from 'connected-react-router';
-import Immutable from 'immutable';
+import Immutable, {fromJS} from 'immutable';
 import {composeWithDevTools} from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import createRootReducer from '../reducers';
@@ -9,9 +9,30 @@ import createRootReducer from '../reducers';
 // Session history
 export const history = createBrowserHistory();
 
+const loadState = () => {
+  try {
+    const serializedState = localStorage.getItem('state');
+    if (serializedState === null) {
+      return undefined;
+    }
+    return fromJS(JSON.parse(serializedState));
+  } catch (err) {
+    return undefined;
+  }
+};
+
+const saveState = (state) => {
+  try {
+    const serializedState = JSON.stringify(state.toJS());
+    localStorage.setItem('state', serializedState);
+  } catch {
+    // ignore write errors
+  }
+};
+
 export default () => {
   // For typescript, this may need tweaking...
-  let initialState = Immutable.Map();
+  let initialState = loadState() || Immutable.Map();
 
   // Define var for filtering actions when debugging redux to reduce clutter and increase performance.
   let actionsWhitelist = [];
@@ -35,6 +56,10 @@ export default () => {
     initialState,
     enhancer
   );
+
+  store.subscribe(() => {
+    saveState(store.getState());
+  });
 
   return store;
 };
