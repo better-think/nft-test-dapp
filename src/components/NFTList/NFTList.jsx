@@ -14,22 +14,21 @@ const NFTList = () => {
 
   const isLoggedIn = useSelector(state => state.getIn(['account','isLoggedIn']));
   const accountId = useSelector(state => state.getIn(['peerplays','account','account','id']));
+  const isBlockchainConnected = useSelector(state => state.getIn(['peerplays','connected']));
 
   useEffect(() => {
     if(!isLoggedIn)
       dispatch(push('/login'));
     else {
-      const timer = setTimeout(() => {
+      if(isBlockchainConnected) {
         PeerplaysService.callBlockchainDbApi('nft_get_tokens_by_owner',[accountId]).then(async nfts => {
-          console.log(JSON.stringify(nfts));
           Promise.all(nfts.map((nft) => {
             return PeerplaysService.callBlockchainDbApi('nft_get_name',[nft.get('nft_metadata_id')]).catch(() => {/*ignore*/});
           })).then(nftNames => setItems(nftNames));
         }).catch(()=>{/*ignore*/});
-      },1000);
-      return () => clearTimeout(timer);
+      }
     }
-  }, [accountId, dispatch, isLoggedIn]);
+  }, [accountId, dispatch, isLoggedIn, isBlockchainConnected]);
 
   return (
     <div>

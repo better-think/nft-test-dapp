@@ -23,7 +23,9 @@ const loadState = () => {
 
 const saveState = (state) => {
   try {
-    const serializedState = JSON.stringify(state.toJS());
+    const stateJson = state.toJS();
+    delete stateJson.peerplays.connected;
+    const serializedState = JSON.stringify(stateJson);
     localStorage.setItem('state', serializedState);
   } catch {
     // ignore write errors

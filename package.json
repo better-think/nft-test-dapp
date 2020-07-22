@@ -13,7 +13,7 @@
     "history": "^4.10.1",
     "immutable": "^4.0.0-rc.12",
     "loglevel": "^1.6.8",
-    "peerplaysjs-lib": "https://gitlab.com/PBSA/PeerplaysIO/tools-libs/peerplaysjs-lib.git#nft-support-changes",
+    "peerplaysjs-lib": "https://gitlab.com/PBSA/PeerplaysIO/tools-libs/peerplaysjs-lib.git#role-based-permissions",
     "randomstring": "^1.1.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
