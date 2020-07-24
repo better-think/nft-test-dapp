@@ -42,6 +42,7 @@ const CreateNFT = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setErrors({});
 
     if(!isUrl(url)) {
       setErrors({name: 'malformed url'});
@@ -107,11 +108,13 @@ const CreateNFT = () => {
   const handleNFTnameChange = (e) => {
     setName(e.target.value);
     setCreateSuccess(false);
+    setErrors({});
   };
 
   const handleUrlChange = (e) => {
     setUrl(e.target.value);
     setCreateSuccess(false);
+    setErrors({});
   }
 
   const isDisabled = () => {
