@@ -1,0 +1,27 @@
+.nftlist {
+  display: flex;
+  flex-direction: column;
+  margin: 2rem;
+  align-items: center;
+  width: calc(100vw - 4rem);
+
+  &-container {
+    width: inherit;
+  }
+
+  &-table {
+    min-width: 320px;
+    width: 80%;
+    margin: 2rem auto;
+  }
+
+  &-img {
+    height: 100px;
+    width: 100px;
+  }
+
+  &-marketplace {
+    margin: 2rem;
+    width: calc(100vw - 4rem);
+  }
+}

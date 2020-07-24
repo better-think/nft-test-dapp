@@ -14,6 +14,7 @@
     "immutable": "^4.0.0-rc.12",
     "loglevel": "^1.6.8",
     "peerplaysjs-lib": "https://gitlab.com/PBSA/PeerplaysIO/tools-libs/peerplaysjs-lib.git#role-based-permissions",
+    "prop-types": "^15.7.2",
     "randomstring": "^1.1.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
