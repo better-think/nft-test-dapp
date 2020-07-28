@@ -4,9 +4,11 @@
   margin: 2rem;
   align-items: center;
   width: calc(100vw - 4rem);
+  max-height: calc(100vh - 4rem);
+  overflow-x: hidden;
 
   &-container {
-    width: inherit;
+    width: 100%;
   }
 
   &-table {
