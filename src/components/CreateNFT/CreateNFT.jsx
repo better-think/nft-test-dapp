@@ -32,7 +32,7 @@ const CreateNFT = () => {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    for (let i = 0; i < 16; i++)
+    for (let i = 0; i < 15; i++)
     {
       text += possible.charAt(Math.floor(Math.random() * possible.length)); 
     }
@@ -62,7 +62,9 @@ const CreateNFT = () => {
       owner: peerplaysAccountId,
       name,
       symbol: generateRandomString(),
-      base_uri: ''
+      base_uri: '',
+      is_transferable: false,
+      is_sellable: true
     }, peerplaysAccountName, peerplaysPassword).then((res) => {
       if(!res) {
         setErrors({
@@ -87,6 +89,7 @@ const CreateNFT = () => {
           setErrors({
             name: 'Some error occurred while minting NFT'
           });
+          return;
         }
         setCreateSuccess(true);
         setName('');
