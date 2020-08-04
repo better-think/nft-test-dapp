@@ -6,6 +6,7 @@ import {Button, Table, TableBody, TableCell, TableRow, TableHead, TableContainer
 import { fromJS } from 'immutable';
 import { PeerplaysService } from '../../services';
 import { NFTActions } from '../../actions';
+import DeleteButton from '../../assets/images/delete.png';
 
 const ListItem = (props) => {
   const {row, index, isSelected, handleClick} = props;
@@ -48,12 +49,17 @@ const NFTList = () => {
   const [items, setItems] = useState([]);
   const [listings, setListings] = useState([]);
   const [selected, setSelected] = useState([]);
+  const [openSections, setOpenSections] = useState(['yourNFTs']);
+  const [errors, setErrors] = useState('');
   const dispatch = useDispatch();
 
   const isLoggedIn = useSelector(state => state.getIn(['account','isLoggedIn']));
-  const accountId = useSelector(state => state.getIn(['peerplays','account','account','id']));
+  const account = useSelector(state => state.getIn(['peerplays','account','account']));
+  const accountId = account.getIn(['id']);
   const isBlockchainConnected = useSelector(state => state.getIn(['peerplays','connected']));
   const blockchainPrecision = useSelector(state => state.getIn(['peerplays','balancePrecision']));
+  const peerplaysAccountName = account.getIn(['name']);
+  const peerplaysPassword = useSelector(state => state.getIn(['peerplays','password']));
 
   useEffect(() => {
     if(!isLoggedIn)
@@ -118,15 +124,51 @@ const NFTList = () => {
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
+  const showHideSection = (sectionName) => {
+    if(openSections.includes(sectionName)) {
+      setOpenSections(openSections.filter((section) => section !== sectionName));
+    }
+    else {
+      setOpenSections([...openSections, sectionName]);
+    }
+  }
+
+  const deleteNFTListing = (listing) => {
+    if(isLoggedIn && isBlockchainConnected) {
+      PeerplaysService.createAndSendTransaction('cancel_offer', {
+        fee: {
+          amount: 0,
+          asset_id: '1.3.0'
+        },
+        issuer: listing.issuer,
+        offer_id: listing.id,
+        extensions: []
+      }, peerplaysAccountName, peerplaysPassword).then((res) => {
+        if(!res) {
+          setErrors('Some error occurred while deleting the listing');
+          return;
+        }
+        setListings(listings.filter(list => list.id !== listing.id));
+      }).catch((err) => {
+        console.log(err);
+        setErrors(err);
+      });;
+    }
+  }
+
   return (
     <div className='nftlist'>
       {items && items.length === 0 ? <div>No NFTs found for user</div> :
       <div className='nftlist-container'>
-        <div>
-          Your NFT Tokens (Not Listed on Marketplace Yet)
+        <div className='nftlist-row'>
+          <div onClick={() => showHideSection('yourNFTs')}>
+            Your NFT Tokens (Not Listed on Marketplace Yet)
+            <span className={openSections.includes('yourNFTs')? 'nftlist-arrowup' : 'nftlist-arrowdown'}/>
+          </div>
+          <Button variant="contained" onClick={() => dispatch(push('/create-nft'))}>Create New NFT</Button>
         </div>
         <hr/>
-        <TableContainer className='nftlist-table' component={Paper}>
+        <TableContainer className='nftlist-table' hidden={!openSections.includes('yourNFTs')} component={Paper}>
           <Table aria-label="nft list table">
             <TableHead>
               <TableRow>
@@ -156,14 +198,17 @@ const NFTList = () => {
           Click here to List {selected.length} token(s) on marketplace
         </Button>}
       </div>}
-      <Button variant="contained" onClick={() => dispatch(push('/create-nft'))}>Create New NFT</Button>
       <div className='nftlist-marketplace'>
         <div className='nftlist-container'>
-          <div>
-            NFTs Listed on Marketplace
+          <div className='nftlist-row'>
+            <div onClick={() => showHideSection('listedNFTs')}>
+              NFTs Listed on Marketplace
+              <span className={openSections.includes('listedNFTs')? 'nftlist-arrowup' : 'nftlist-arrowdown'}/>
+            </div>
+            <Button variant="contained" onClick={() => dispatch(push('/'))}>Go To Marketplace</Button>
           </div>
           <hr/>
-          <TableContainer className='nftlist-table' component={Paper}>
+          <TableContainer className='nftlist-table' hidden={!openSections.includes('listedNFTs')} component={Paper}>
             <Table aria-label="marketplace table">
               <TableHead>
                 <TableRow>
@@ -171,6 +216,7 @@ const NFTList = () => {
                   <TableCell>NFT IDs</TableCell>
                   <TableCell>Min Price</TableCell>
                   <TableCell>Max Price</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -181,6 +227,7 @@ const NFTList = () => {
                       <TableCell>{row.item_ids.join()}</TableCell>
                       <TableCell>PPY {row.minimum_price.amount/Math.pow(10,blockchainPrecision)}</TableCell>
                       <TableCell>PPY {row.maximum_price.amount/Math.pow(10,blockchainPrecision)}</TableCell>
+                      <TableCell><img className='nftlist-delete' src={DeleteButton} alt='delete' onClick={() => deleteNFTListing(row)}/></TableCell>
                     </TableRow>
                   )}
                 )}
@@ -188,7 +235,7 @@ const NFTList = () => {
             </Table>
           </TableContainer>
         </div>
-        <Button variant="contained" onClick={() => dispatch(push('/'))}>Go To Marketplace</Button>
+        {errors && <div>errors</div>}
       </div>
     </div>
   )
