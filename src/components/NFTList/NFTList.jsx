@@ -158,7 +158,10 @@ const NFTList = () => {
 
   return (
     <div className='nftlist'>
-      {items && items.length === 0 ? <div>No NFTs found for user</div> :
+      {items && items.length === 0 ? <div>
+        <div>No NFTs found for user</div>
+        <Button variant="contained" onClick={() => dispatch(push('/create-nft'))}>Create New NFT</Button>
+      </div> :
       <div className='nftlist-container'>
         <div className='nftlist-row'>
           <div onClick={() => showHideSection('yourNFTs')}>
