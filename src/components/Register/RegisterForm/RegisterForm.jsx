@@ -121,11 +121,19 @@ class RegisterForm extends Component {
       });
     }).catch((err) => {
       console.log(err);
-      this.setState({
-        errors: {
-          username: err
-        }
-      });
+      if(err.base) {
+        this.setState({
+          errors: {
+            username: err.base[0]
+          }
+        });
+      } else {
+        this.setState({
+          errors: {
+            username: err
+          }
+        });
+      }
     });
   };
 
